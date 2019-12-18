@@ -32,7 +32,7 @@ $(document).ready(function () {
     nameSelector.addEventListener('change', updateSubject, false);
 
     function sendName(subjectName) {
-        var data= {
+        var data = {
             data: JSON.stringify({
                 'name': subjectName
             }),
@@ -46,6 +46,12 @@ $(document).ready(function () {
             data: data,
             dataType: "json"
         });
+    }
+
+    function removeTable(el) {
+        while (el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
     }
 
     function set3dPlot() {
@@ -77,31 +83,34 @@ $(document).ready(function () {
             console.log(dataToPlot);
             // anno start
             var anno = [];
-            var annoData = data["anno"];
-            for (var i = 0; i < annoData.length; i ++) {
-                anno.push({
-                    showarrow: true,
-                    arrowhead: 7,
-                    x: annoData[i]["x"],
-                    y: annoData[i]["y"],
-                    z: annoData[i]["z"],
-                    text: annoData[i]["text"],
-                    font: {
-                        color: "black",
-                        size: 8
-                    },
-                    ax: 5,
-                    ay: 2,
-                    xanchor: "left",
-                    yanchor: "bottom"
-                })
+            if ("anno" in data) {
+                var annoData = data["anno"];
+                for (var i = 0; i < annoData.length; i++) {
+                    anno.push({
+                        showarrow: true,
+                        arrowhead: 7,
+                        x: annoData[i]["x"],
+                        y: annoData[i]["y"],
+                        z: annoData[i]["z"],
+                        text: annoData[i]["text"],
+                        font: {
+                            color: "black",
+                            size: 8
+                        },
+                        ax: 5,
+                        ay: 2,
+                        xanchor: "left",
+                        yanchor: "bottom"
+                    })
+                }
+
             }
-            console.log(anno)
+            console.log(anno);
             // anno end
             var layout = {
-                autosize: false,
-                width: 1000,
-                height: 800,
+                autosize: true,
+                //width: 1000,
+                //height: 600,
                 margin: {
                     l: 0,
                     r: 0,
@@ -143,15 +152,67 @@ $(document).ready(function () {
                 }
             };
             Plotly.newPlot('3dPlotDiv', dataToPlot, layout);
+
+            //table start:
+            if ('table' in data && 'tableFR' in data) {
+                var values = data["table"];
+                var rowColor = [];
+                var rowEvenColor = "lightgrey";
+                var rowOddColor = "white";
+                for (var i = 0; i < data["table"][0].length; i++) {
+                    if (i % 2 == 0) {
+                        rowColor.push(rowOddColor);
+                    } else {
+                        rowColor.push(rowEvenColor);
+                    }
+                }
+
+                var headerColor = "grey";
+                var dataToTable = [{
+                    type: 'table',
+                    header: {
+                        values: data["tableFR"],
+                        align: "center",
+                        line: { width: 1, color: 'black' },
+                        fill: { color: headerColor },
+                        font: { family: "Arial", size: 12, color: "white" }
+                    },
+                    cells: {
+                        values: values,
+                        align: "center",
+                        line: { color: "black", width: 1 },
+                        fill: {color: [rowColor]},
+                        font: { family: "Arial", size: 11, color: ["black"] }
+                    }
+                }]
+
+                Plotly.plot('table', dataToTable);
+            }
+
+            // var table = document.getElementById("table");
+            // console.log(table);
+            // removeTable(table);
+            // //table header:
+            // var thead = document.createElement('thead');
+            // var frtr = document.createElement('tr');
+            // if ('tableFirstRow' in data) {
+            //     console.log(data['tableFirstRow']);
+            //     data['tableFirstRow'].forEach(function(frdata) {
+            //         var frth = document.createElement('th');
+            //         frth.setAttribute("data-field", frdata);
+            //         frth.textContent = frdata;
+            //         frtr.appendChild(frth);
+            //     })
+            //     thead.appendChild(frtr);
+            //     table.appendChild(thead);
+            // }
+
+            // var $table = $('#table');
+            // console.log($table);
+            // $(function() {
+            //     console.log(data["table"]);
+            //     $table.bootstrapTable({data: data["table"]});
+            // })
         });
     }
 });
-
-
-
-
-
-
-
-
-
