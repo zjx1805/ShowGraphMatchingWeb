@@ -156,6 +156,7 @@ $(document).ready(function () {
             //table start:
             if ('table' in data && 'tableFR' in data) {
                 var values = data["table"];
+                console.log(values);
                 var rowColor = [];
                 var rowEvenColor = "lightgrey";
                 var rowOddColor = "white";
@@ -186,7 +187,7 @@ $(document).ready(function () {
                     }
                 }]
 
-                Plotly.plot('table', dataToTable);
+                Plotly.newPlot('table', dataToTable);
             }
 
             // var table = document.getElementById("table");
