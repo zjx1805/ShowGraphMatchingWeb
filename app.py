@@ -17,6 +17,7 @@ dataToSend = {}
 #	if find is not None:
 #		allSubjectNames.append(files[:-5])
 
+
 @app.route('/')
 def index():
     return render_template("index.html")
